@@ -6,22 +6,19 @@ LABEL mantainer="Dave Willenberg <dave@detroit-english.de>" \
     org.label-schema.url="https://github.com/detroitenglish/docker-caddy-rpi" \
     org.label-schema.schema-version="1.0"
 
-RUN apk add --update --no-cache git && go get github.com/mholt/caddy
-
 # Edit this list below, defining your plugins with a space-seperated list
 ENV CADDYPLUGINS='github.com/echocat/caddy-filter github.com/captncraig/caddy-realip github.com/caddyserver/dnsproviders/cloudflare'
 
-RUN RUNFILE=$GOPATH/src/github.com/mholt/caddy/caddy/caddymain/run.go \
+RUN apk add --update --no-cache git && go get github.com/mholt/caddy github.com/caddyserver/builds $CADDYPLUGINS \
+  && BUILDPATH=$GOPATH/src/github.com/mholt/caddy/caddy \
+  && RUNFILE=$BUILDPATH/caddymain/run.go \
   && for i in ${CADDYPLUGINS}; do sed -i "/\(imported\)/a_ \"${i}\"" $RUNFILE; done \
-  && sed -i 's@EnableTelemetry = true@EnableTelemetry = false@' $RUNFILE
-
-WORKDIR $GOPATH/src/github.com/mholt/caddy/caddy
-
-RUN go get github.com/caddyserver/builds $CADDYPLUGINS \
+  && sed -i 's@EnableTelemetry = true@EnableTelemetry = false@' $RUNFILE \
+  && cd $BUILDPATH \
   && go run build.go \
-  && mv $PWD/caddy /usr/bin/ \
+  && mv $BUILDPATH/caddy /usr/bin/ \
   && apk del git \
-  && rm -fr $GOPATH/src/github.com/*
+  && rm -fr $GOPATH/src
 
 COPY Caddyfile /etc/Caddyfile
 
