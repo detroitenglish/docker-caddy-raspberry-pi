@@ -1,4 +1,4 @@
-# Caddy Web Server on Docker for Raspberry Pi (arm7)
+# Caddy v1 Web Server on Docker for Raspberry Pi (arm7)
 
 A [Docker](http://docker.com) image for [Caddy](http://caddyserver.com) to serve
 http or https with auto-generated Let's Encrypt certs.
@@ -8,13 +8,11 @@ By default, this image is built with the following plugins:
 -  [filter](http://caddyserver.com/docs/filter)
 -  [tls.dns.cloudflare](https://caddyserver.com/docs/tls.dns.cloudflare)
 
-You can easily build your own image with your plugins of choice - refer to this
-repo's [Dockerfile](./Dockerfile) for more info.
+You can easily build your own image with your plugins of choice by editing the [Dockerfile](./Dockerfile) and [caddy.go](/caddy.go) file.
 
 ## Versions
-  - Caddy Nightly
-  - Compiled using Go v1.11.4
-  - Built on Alpine Linux v3.7
+  - Caddy v1.0.3 (Stable)
+  - Compiled with latest Go v1.X on Alpine
 
 ## Getting Started
 
@@ -89,7 +87,7 @@ $ docker run -d \
 ```
 
 Refer to the [docker run](https://docs.docker.com/engine/reference/commandline/run/) and
-[Caddy web server](https://caddyserver.com/docs) documentation for help with above.
+[Caddy web server](https://caddyserver.com/v1/docs) documentation for help with above.
 
 ## Automagic https with Let's Encrypt
 
