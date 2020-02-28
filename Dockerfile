@@ -1,4 +1,4 @@
-FROM arm32v6/golang:1.11.4-alpine3.7
+FROM arm32v6/golang:1-alpine
 
 LABEL mantainer="Dave Willenberg <dave@detroit-english.de>" \
     org.label-schema.name="docker-caddy-rpi" \
@@ -7,18 +7,19 @@ LABEL mantainer="Dave Willenberg <dave@detroit-english.de>" \
     org.label-schema.schema-version="1.0"
 
 # Edit this list below, defining your plugins with a space-seperated list
-ENV CADDYPLUGINS='github.com/echocat/caddy-filter github.com/captncraig/caddy-realip github.com/caddyserver/dnsproviders/cloudflare'
+ENV CADDYPLUGINS='github.com/echocat/caddy-filter github.com/captncraig/caddy-realip github.com/caddyserver/dnsproviders/cloudflare' GO111MODULE='on'
 
-RUN apk add --update --no-cache git && go get github.com/mholt/caddy github.com/caddyserver/builds $CADDYPLUGINS \
-  && BUILDPATH=$GOPATH/src/github.com/mholt/caddy/caddy \
-  && RUNFILE=$BUILDPATH/caddymain/run.go \
-  && for i in ${CADDYPLUGINS}; do sed -i "/\(imported\)/a_ \"${i}\"" $RUNFILE; done \
-  && sed -i 's@EnableTelemetry = true@EnableTelemetry = false@' $RUNFILE \
-  && cd $BUILDPATH \
-  && go run build.go \
-  && mv $BUILDPATH/caddy /usr/bin/ \
-  && apk del git \
-  && rm -fr $GOPATH/src
+WORKDIR /var
+
+COPY caddy.go /var/caddy.go
+
+RUN apk add --update --no-cache git \
+  && go get github.com/caddyserver/caddy/caddy@v1.0.3 $CADDYPLUGINS \
+  && go mod init caddy \
+  && go build \
+  && mv caddy /usr/bin/ \
+  && rm -fr $GOPATH/src \
+  && apk del git
 
 COPY Caddyfile /etc/Caddyfile
 
