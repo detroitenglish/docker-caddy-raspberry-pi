@@ -1,4 +1,6 @@
-# Caddy v1 Web Server on Docker for Raspberry Pi (arm7)
+# ❗ This image is deprecated and will no longer build ❗
+
+## Caddy v1 Web Server on Docker for Raspberry Pi (arm7)
 
 A [Docker](http://docker.com) image for [Caddy](http://caddyserver.com) to serve
 http or https with auto-generated Let's Encrypt certs.
